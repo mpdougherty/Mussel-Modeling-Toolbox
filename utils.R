@@ -24,27 +24,8 @@ load_packages <- function(need_pkgs) {
   lapply(need_pkgs, require, character.only = TRUE)
 }
 
-#' @title Load resri package
-#' 
-#' @description Installs the required R packages for the ArcGIS FluvialGeomorph
-#'     toolbox. 
-#' 
-#' @export
-#'  
-#' @return Installs the required ArcGIS FluvialGeomorph R packages. 
-#' 
-#' @details This function installs the \code{RegionalCurve} R package from 
-#'     GitHub and the \code{fgm} R package from a local source tarball. 
-#' 
+
 load_resri <- function() {
-  # Install devtools
-  if (!require("devtools")) { 
-    install.packages("devtools", dependencies = TRUE)
-    if ("devtools" %in% rownames(installed.packages()) == TRUE) {
-      message("The `devtools` package was installed.")
-    }
-  }
-  
   # Install `resri` from github
   if (!require("resri")) {
     devtools::install_github(repo = "mpdougherty/resri",
@@ -58,6 +39,25 @@ load_resri <- function() {
   } else {
     if ("resri" %in% rownames(installed.packages()) == TRUE) {
       message("The `resri` package was already installed.")
+    }
+  }
+}
+
+
+load_mcat <- function() {
+  # Install `mcat` from github
+  if (!require("mcat")) {
+    devtools::install_github(repo = "mpdougherty/mcat",
+                             force = TRUE,
+                             upgrade = TRUE,
+                             dependencies = TRUE,
+                             options(install.packages.check.source = "no"))
+    if ("resri" %in% rownames(installed.packages()) == TRUE) {
+      message("The `mcat` package was installed.")
+    }
+  } else {
+    if ("mcat" %in% rownames(installed.packages()) == TRUE) {
+      message("The `mcat` package was already installed.")
     }
   }
 }
