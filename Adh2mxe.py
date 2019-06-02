@@ -74,38 +74,38 @@ def Adh2mxe(adh_file):
     depth = arcpy.sa.Idw(in_point_features = "adh_events",
                          z_field = "Depth")
     depth.save(os.path.join(flow_prefix + "_depth.tif"))
-    arcpy.AddMessage("Interpolated depth")
+    arcpy.AddMessage("    Interpolated depth")
 
     ## velocity
     velocity = arcpy.sa.Idw(in_point_features = "adh_events",
                             z_field = "Velocity")
     velocity.save(os.path.join(flow_prefix + "_velocity.tif"))
-    arcpy.AddMessage("Interpolated velocity")
+    arcpy.AddMessage("    Interpolated velocity")
 
     ## shear_stress
     shear_stress = arcpy.sa.Idw(in_point_features = "adh_events",
                                 z_field = "Bed_Shear_Stress")
     shear_stress.save(os.path.join(flow_prefix + "_ss.tif"))
-    arcpy.AddMessage("Interpolated shear stress")
+    arcpy.AddMessage("    Interpolated shear stress")
 
     ## froude_number
     froude_number = arcpy.sa.Idw(in_point_features = "adh_events",
                                  z_field = "Froude_Number")
     froude_number.save(os.path.join(flow_prefix + "_froude.tif"))
-    arcpy.AddMessage("Interpolated Froude number")
+    arcpy.AddMessage("    Interpolated Froude number")
 
     ## reynolds_number
     reynolds_number = arcpy.sa.Idw(in_point_features = "adh_events",
                                    z_field = "Reynolds_Number")
     reynolds_number.save(os.path.join(flow_prefix + "_reynolds.tif"))
-    arcpy.AddMessage("Interpolated Reynolds number")
+    arcpy.AddMessage("    Interpolated Reynolds number")
 
     ## slope
     slope = arcpy.sa.Slope(in_raster = depth,
                            output_measurement = "DEGREE",
                            z_unit = "FOOT")
     slope.save(os.path.join(flow_prefix + "_slope.tif"))
-    arcpy.AddMessage("Calculated slope")
+    arcpy.AddMessage("    Calculated slope")
 
     # Convert to .bil format
     arcpy.AddMessage("Converting rasters to .bil format")
@@ -115,7 +115,7 @@ def Adh2mxe(adh_file):
     if os.path.isdir(input_bil_folder) == False:
       os.mkdir(input_bil_folder)
 
-    #list rasters
+    ## list rasters
     rasters = arcpy.ListRasters()
     for raster in rasters:
         raster_basename = os.path.splitext(os.path.basename(raster))[0]
@@ -123,7 +123,7 @@ def Adh2mxe(adh_file):
         arcpy.CopyRaster_management(in_raster = raster,
                                     out_rasterdataset = bil_raster)
         arcpy.Delete_management(raster)
-        arcpy.AddMessage("Converted " + raster_basename + " to .bil format")
+        arcpy.AddMessage("    Converted " + raster_basename + " to .bil format")
     
     # Convert .bil format to .mxe format
     ## Create input_mxe folder
@@ -138,7 +138,8 @@ def Adh2mxe(adh_file):
     
     subprocess.call(["java", "-Xmx5g", "-cp", maxent_jar, "density.Convert", 
                      input_bil_folder, "bil", input_mxe_folder, "mxe"])
-
+    
+    arcpy.AddMessage("Converted rasters to .mxe format")
 
 def main():
     # Call the Adh2mxe function with command line parameters
