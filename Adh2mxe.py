@@ -20,6 +20,10 @@ will hold the rasters in the `input_bil` folder converted to the Maxent readable
 .mxe format. The .mxe format can only be read by Maxent, but allows it to run 
 much more efficiently. 
 
+You will see a command window opened by the maxent.jar program that will display
+progress of the .bil to .mxe conversion process. Do not close this window, it 
+will close on its own when the conversion of all rasters is complete. 
+
 Parameters:
 adh_file              -- Path to the AdH output .csv file
 coordinate_system     -- Coordinate system of the adh_file
@@ -35,7 +39,7 @@ import arcpy
 import os
 import subprocess
 
-def Adh2mxe(adh_file):
+def Adh2mxe(adh_file, coordinate_system, mask, flow_prefix):
     # Set environment variables
     arcpy.env.overwriteOutput = True
     arcpy.env.workspace = os.path.dirname(adh_file)
@@ -110,12 +114,12 @@ def Adh2mxe(adh_file):
     # Convert to .bil format
     arcpy.AddMessage("Converting rasters to .bil format")
 
-    ## Create input_bil folder
+    ## Create `input_bil` folder
     input_bil_folder = os.path.join(arcpy.env.workspace, "input_bil")
     if os.path.isdir(input_bil_folder) == False:
       os.mkdir(input_bil_folder)
 
-    ## list rasters
+    ## list rasters and convert to .bil format
     rasters = arcpy.ListRasters()
     for raster in rasters:
         raster_basename = os.path.splitext(os.path.basename(raster))[0]
@@ -131,19 +135,19 @@ def Adh2mxe(adh_file):
     if os.path.isdir(input_mxe_folder) == False:
       os.mkdir(input_mxe_folder)
     
-    ## Call the maxent.jar density.Convert function to convert
+    ## Call the maxent.jar density.Convert function to convert bil to mxe
     script_path = os.path.dirname(os.path.abspath( __file__ ))
     maxent_path = os.path.join(script_path, "Maxent")
-    maxent_jar = os.path.join(maxent_path, "maxent.jar")
+    maxent_jar_path = os.path.join(maxent_path, "maxent.jar")
     
-    subprocess.call(["java", "-Xmx5g", "-cp", maxent_jar, "density.Convert", 
+    subprocess.call(["java", "-Xmx5g", "-cp", maxent_jar_path, "density.Convert", 
                      input_bil_folder, "bil", input_mxe_folder, "mxe"])
     
     arcpy.AddMessage("Converted rasters to .mxe format")
 
 def main():
     # Call the Adh2mxe function with command line parameters
-    Adh2mxe(adh_file)
+    Adh2mxe(adh_file, coordinate_system, mask, flow_prefix)
 
 if __name__ == "__main__":
     # Get input parameters
