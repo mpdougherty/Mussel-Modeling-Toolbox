@@ -134,6 +134,9 @@ def Adh2mxe(adh_file, coordinate_system, mask, flow_prefix):
     # # Convert .bil format to .mxe format
     bil2mxe(input_bil_folder)
     
+    # Cleanup
+    arcpy.Delete_management(scratchGDB)
+    
     
 def main():
     # Call the Adh2mxe function with command line parameters
