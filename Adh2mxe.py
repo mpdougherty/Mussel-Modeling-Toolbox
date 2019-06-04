@@ -39,6 +39,8 @@ import arcpy
 import os
 import subprocess
 
+from bil2mxe import bil2mxe
+
 def Adh2mxe(adh_file, coordinate_system, mask, flow_prefix):
     # Set environment variables
     arcpy.env.overwriteOutput = True
@@ -129,22 +131,10 @@ def Adh2mxe(adh_file, coordinate_system, mask, flow_prefix):
         arcpy.Delete_management(raster)
         arcpy.AddMessage("    Converted " + raster_basename + " to .bil format")
     
-    # Convert .bil format to .mxe format
-    ## Create input_mxe folder
-    input_mxe_folder = os.path.join(arcpy.env.workspace, "input_mxe")
-    if os.path.isdir(input_mxe_folder) == False:
-      os.mkdir(input_mxe_folder)
+    # # Convert .bil format to .mxe format
+    bil2mxe(input_bil_folder)
     
-    ## Call the maxent.jar density.Convert function to convert bil to mxe
-    script_path = os.path.dirname(os.path.abspath( __file__ ))
-    maxent_path = os.path.join(script_path, "Maxent")
-    maxent_jar_path = os.path.join(maxent_path, "maxent.jar")
     
-    subprocess.call(["java", "-Xmx5g", "-cp", maxent_jar_path, "density.Convert", 
-                     input_bil_folder, "bil", input_mxe_folder, "mxe"])
-    
-    arcpy.AddMessage("Converted rasters to .mxe format")
-
 def main():
     # Call the Adh2mxe function with command line parameters
     Adh2mxe(adh_file, coordinate_system, mask, flow_prefix)

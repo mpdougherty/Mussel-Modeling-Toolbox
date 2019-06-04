@@ -27,8 +27,8 @@ mask                  -- Path to the mask raster dataset used to create the
                          Maxent model input rasters
 
 Outputs:
-Creates two new folders: `input_bil` (Adh points interpolated to raster in the 
-.bil format, and `input_mxe` (.bil rasters converted to the Maxent .mxe format).
+Creates a new folder `output_bil` containing rasters converted to the .bil 
+format. 
 ____________________________________________________________________________"""
  
 import arcpy
