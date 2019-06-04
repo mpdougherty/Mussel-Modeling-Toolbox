@@ -1,28 +1,19 @@
 """____________________________________________________________________________
-Script Name:          Adh2mxe.py
-Description:          Converts a .csv file of Adh outputs to the Maxent .mxe 
-                      format. 
-Date:                 05/30/2019
+Script Name:          Adh2bil.py
+Description:          Converts a .csv file of Adh outputs to the .bil format. 
+Date:                 06/04/2019
 
 Usage:
 Converts a .csv file of Adh outputs for multiple variables to the .bil format 
-using IDW interpolation. It then converts the folder of .bil rasters to the 
-Maxent .mxe raster format. 
+using IDW interpolation.  
 
 This tool assumes that the following fields are present in the Adh outputs 
 file: X, Y, Z, Depth, Velocity, Bed_Shear_Stress, Froude_Number, and 
 Reynolds_Number. Edit the input .csv file to ensure these field names are used. 
 
-Two output folders will be created in the adh_file base folder. One folder
-named `input_bil` will hold the interpolated Adh rasters created from the 
-adh_file in the ESRI readable .bil format. The second folder named `input_mxe` 
-will hold the rasters in the `input_bil` folder converted to the Maxent readable 
-.mxe format. The .mxe format can only be read by Maxent, but allows it to run 
-much more efficiently. 
-
-You will see a command window opened by the maxent.jar program that will display
-progress of the .bil to .mxe conversion process. Do not close this window, it 
-will close on its own when the conversion of all rasters is complete. 
+A folder will be created in the adh_file base folder named `input_bil` that will
+hold the interpolated Adh rasters created from the adh_file in the ESRI readable
+.bil format. 
 
 Parameters:
 adh_file              -- Path to the AdH output .csv file
@@ -31,17 +22,15 @@ mask                  -- Path to the mask raster dataset
 flow_prefix           -- String used to denote the flow level of the Adh model
 
 Outputs:
-Creates two new folders: `input_bil` (Adh points interpolated to raster in the 
-.bil format, and `input_mxe` (.bil rasters converted to the Maxent .mxe format).
+Creates a new folder `input_bil` containing Adh points interpolated to rasters 
+in the .bil format.
 ____________________________________________________________________________"""
  
 import arcpy
 import os
 import subprocess
 
-from bil2mxe import bil2mxe
-
-def Adh2mxe(adh_file, coordinate_system, mask, flow_prefix):
+def Adh2bil(adh_file, coordinate_system, mask, flow_prefix):
     # Set environment variables
     arcpy.env.overwriteOutput = True
     arcpy.env.workspace = os.path.dirname(adh_file)
@@ -130,17 +119,14 @@ def Adh2mxe(adh_file, coordinate_system, mask, flow_prefix):
                                     out_rasterdataset = bil_raster)
         arcpy.Delete_management(raster)
         arcpy.AddMessage("    Converted " + raster_basename + " to .bil format")
-    
-    # # Convert .bil format to .mxe format
-    bil2mxe(input_bil_folder)
-    
+
     # Cleanup
     arcpy.Delete_management(scratchGDB)
     
     
 def main():
-    # Call the Adh2mxe function with command line parameters
-    Adh2mxe(adh_file, coordinate_system, mask, flow_prefix)
+    # Call the Adh2bil function with command line parameters
+    Adh2bil(adh_file, coordinate_system, mask, flow_prefix)
 
 if __name__ == "__main__":
     # Get input parameters
